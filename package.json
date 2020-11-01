@@ -1,0 +1,20 @@
+{
+  "name": "SteamWebAPIScrape",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "scrape": "node scrape.js",
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "http-errors": "^1.8.0",
+    "jade": "^1.11.0",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "puppeteer": "^5.2.1"
+  }
+}
