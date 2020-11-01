@@ -25,7 +25,7 @@ app.use(function(req, res, next){
 	res.locals.connection = mysql.createConnection({
 		host     : 'localhost',
 		user     : 'root',
-		password : 'B@sk3tB@Ll22',
+		password : '',
 		database : 'steamstatdb'
 	});
 	res.locals.connection.connect();
