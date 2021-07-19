@@ -1,6 +1,11 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer-extra')
+
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
 const chalk = require("chalk");
 var fs = require("fs");
+
 
 // Colorful Logging
 const error = chalk.bold.red;
@@ -10,20 +15,32 @@ const mysql = require('mysql');
 const con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'B@sk3tB@Ll22',
+  password: '',
   database: 'steamstatdb'
 });
 
 let scrape = async () => {
   try {
-    const browser = await puppeteer.launch({ headless: true })
-    const page = await browser.newPage()
+    const browser = await puppeteer.launch({
+      headless: true,
+      devtools: true,
+      args: [
+        '--ignore-certificate-errors',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu'
+            ]
+    });
+    const context = await browser.createIncognitoBrowserContext();
+    const page = await context.newPage(); // Create new instance of puppet
     await page.setViewport({ width: 1366, height: 768 }) 
     // enter url in page
     await page.goto(`https://steamstat.us/`, {timeout: 0, waitUntil: 'networkidle0'});
     await page.waitFor('.container');
-    await page.screenshot({ path: ('screencap.png') })
-    console.log('test');
+
+    await page.screenshot({ path: ('screencap.png') });
+    
     var result = await page.evaluate(() => {
       var steamNameId = document.querySelectorAll('.container > .services-container > .services');
       var onlineSteam = document.querySelectorAll('.service > .status');
@@ -60,7 +77,7 @@ let scrape = async () => {
 
     con.connect(function(err) {
       if (err) throw err;
-      var sql = "DELETE FROM steamstatustable WHERE id = '1'";
+      var sql = "DELETE FROM steamstatustable";
       con.query(sql, function (err, result) {
         if (err) throw err;
         console.log("Number of records deleted: " + result.affectedRows);
